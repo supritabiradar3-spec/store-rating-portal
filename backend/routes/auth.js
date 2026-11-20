@@ -14,10 +14,13 @@ const {
 } = require('../utils/validation');
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_store_rating_key_2026';
 
 // Helper to generate JWT token
 function generateToken(user) {
+  const secret = process.env.JWT_SECRET;
+  if (!secret || secret.trim() === '') {
+    throw new Error('Authentication service configuration error.');
+  }
   return jwt.sign(
     {
       id: user.id,
@@ -25,7 +28,7 @@ function generateToken(user) {
       role: user.role,
       name: user.name,
     },
-    JWT_SECRET,
+    secret,
     { expiresIn: '7d' }
   );
 }

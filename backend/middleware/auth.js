@@ -16,8 +16,16 @@ function authenticateToken(req, res, next) {
     });
   }
 
+  const secret = process.env.JWT_SECRET;
+  if (!secret || secret.trim() === '') {
+    return res.status(500).json({
+      status: 'error',
+      message: 'Authentication service configuration error.',
+    });
+  }
+
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'super_secret_store_rating_key_2026');
+    const decoded = jwt.verify(token, secret);
     req.user = decoded;
     next();
   } catch (err) {
@@ -34,9 +42,10 @@ function optionalAuthenticateToken(req, res, next) {
     ? authHeader.slice(7)
     : null;
 
-  if (token) {
+  const secret = process.env.JWT_SECRET;
+  if (token && secret && secret.trim() !== '') {
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'super_secret_store_rating_key_2026');
+      const decoded = jwt.verify(token, secret);
       req.user = decoded;
     } catch {
       req.user = null;

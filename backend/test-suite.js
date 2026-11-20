@@ -7,6 +7,12 @@ const dotenv = require('dotenv');
 
 dotenv.config({ path: path.join(__dirname, '.env') });
 
+if (!process.env.JWT_SECRET || process.env.JWT_SECRET.trim() === '') {
+  console.error('FATAL ERROR: JWT_SECRET environment variable is missing or empty.');
+  console.error('Please configure JWT_SECRET in backend/.env before running the test suite.');
+  process.exit(1);
+}
+
 const db = require('./config/db');
 
 // Import Express app components

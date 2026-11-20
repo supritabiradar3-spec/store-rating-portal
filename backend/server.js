@@ -9,6 +9,13 @@ const dotenv = require('dotenv');
 // Load environment variables
 dotenv.config({ path: path.join(__dirname, '.env') });
 
+// Ensure required JWT_SECRET is configured
+if (!process.env.JWT_SECRET || process.env.JWT_SECRET.trim() === '') {
+  console.error('FATAL ERROR: JWT_SECRET environment variable is missing or empty.');
+  console.error('Please configure JWT_SECRET in backend/.env before starting the server.');
+  process.exit(1);
+}
+
 const db = require('./config/db');
 const authRouter = require('./routes/auth');
 const adminRouter = require('./routes/admin');

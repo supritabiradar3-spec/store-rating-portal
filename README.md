@@ -219,12 +219,17 @@ The database seed script initializes representative accounts for all three appli
 | **Normal User** | `jessica@example.com` | Explore stores, multi-column sorting, submit and update 1–5 star ratings |
 
 > [!TIP]
-> **One-Click Quick Demo**:
-> For the evaluator's convenience, the **Login page includes Quick Demo one-click buttons** (`Admin Demo`, `Store Owner Demo`, `Normal User Demo`). Clicking any demo button automatically autofills credentials and logs in immediately without manual entry.
+> **Quick Demo Logins**:
+> For the evaluator's convenience, the **Login page includes a "Quick Demo Logins" section** with dedicated one-click buttons:
+> - **👑 Admin**: Autofills System Administrator credentials (`admin@storerating.com`).
+> - **🏪 Store Owner**: Autofills Store Owner credentials (`alex.owner@storerating.com`).
+> - **👤 Normal User**: Autofills Normal User credentials (`jessica@example.com`).
 >
-> Evaluators may also register fresh test accounts via the **Sign Up** page or add users through the **Admin Dashboard**.
+> Clicking any demo button automatically populates the **Email** and **Password** fields. Then click the **Sign In** button to log in immediately without manual entry.
 >
-> *(In accordance with security best practices, actual operational credentials are never exposed in public repositories).*
+> Evaluators may also register fresh test accounts via the **Sign Up** page or add new users through the **Admin Dashboard**.
+>
+> *(Note: The backend JWT secret and database configurations are stored strictly in local environment files and are not committed to the repository. Quick Demo accounts are provided for evaluation convenience, with demo autofill credentials built into the frontend interface for one-click review).*
 
 ---
 
@@ -329,7 +334,7 @@ The Vite development server will start on `http://localhost:5173`. Open `http://
 | `DB_USER` | Optional | `root` | Username used to authenticate with MySQL |
 | `DB_PASSWORD` | **Required** | *None* | Password for the MySQL user |
 | `DB_NAME` | Optional | `store_rating_db` | Name of the relational database |
-| `JWT_SECRET` | Recommended | Fallback default | Secret key used to sign and verify JSON Web Tokens |
+| `JWT_SECRET` | **Required** | *None* | Secret key used to sign and verify JSON Web Tokens (must be configured in `backend/.env`; the server will safely exit on startup if missing) |
 
 ### Frontend (`frontend/.env`)
 
@@ -403,8 +408,9 @@ All API endpoints are mounted under both `/api/*` and `/*` prefixes for convenie
 
 ## 11. Security & Best Practices
 
-- **Zero Hardcoded Secrets**: Secrets and credentials are managed strictly through environment variables.
-- **Password Protection**: Passwords hashed with `bcryptjs` (salt rounds: 10) before storage; plaintext passwords are never saved or logged.
+- **Zero Committed Server Secrets**: Sensitive backend configurations (MySQL database password and JWT secret) are managed strictly via local `.env` files and excluded via `.gitignore`.
+- **Evaluation Demo Accounts**: Demo logins are isolated test accounts provided for evaluation convenience, with quick autofill helpers built into the frontend client code.
+- **Password Protection**: Passwords hashed with `bcryptjs` (salt rounds: 10) before storage; plaintext passwords are never saved or logged in the database.
 - **SQL Injection Prevention**: All SQL queries utilize parameterized placeholders (`?`) via `mysql2/promise`.
 - **JWT Authorization**: Requests to protected routes require a valid `Bearer <token>` header verified through Express middleware.
 - **Defensive Error Handling**: API endpoints catch operational errors, prevent sensitive stack trace leaks in client responses, and return structured error messages.
